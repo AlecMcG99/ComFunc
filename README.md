@@ -3,7 +3,6 @@ A module with the common functions that we use in CS 116: BIOINFORMATICS
 
 # Installation
 Download Comfunc.py and put it in the same directory as your Notebook files for BioInformatics
-In your code type 'import ComFunc'
 
 # Usage
 ## parse_fasta(FileName)
