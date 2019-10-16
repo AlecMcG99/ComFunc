@@ -1,7 +1,7 @@
 '''
 TODO:
-A function that translates DNA to Amino Acidse
 Find coordinates of open reading frames
+parse general file instead of specific file types?
 
 DONE:
 parse fasta
@@ -9,6 +9,7 @@ parse gb
 File into fasta
 find CDS list
 Finds exons
+A function that translates DNA to Amino Acidse
 '''
 import re
 
@@ -148,4 +149,36 @@ def translate(DNA):
 
 	return prot_seq
 
+def find_orf(fileName, return_coor = False):
+	gb_ext = re.compile('\.gb')
+	fasta_ext = re.compile('\.fasta')
+	DNA = ''
+	if (gb_ext.search(fileName)):
+		DNA = parse_gb(fileName)
+	elif(fasta_ext.search(fileName)):
+		DNA = parse_fasta(fileName)
+	else:
+		print('Error: Wrong file type sent to find_orf')
+
+	pattern = re.compile(r'ATG((?!TAA|TAG|TGA)...){75,}(TAA|TAG|TGA)')
+	orfs = re.finditer(pattern, DNA)
+	
+
+	orf_list = []
+	for orf in orfs:
+	    begin = orf.start()
+	    end = orf.end()
+	    orf_list.append(begin)
+	    orf_list.append(end)
+	    
+	
+	orf_seqs = []
+	for i in range(0, len(orf_list), 2):
+	    begin = int(orf_list[i])
+	    end = int(orf_list[i+1])
+	    orf_seqs.append(DNA[begin:end])
+	
+	if(return_coor):
+		return orf_list
+	return orf_seqs
 
