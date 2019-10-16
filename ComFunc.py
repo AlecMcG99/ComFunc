@@ -1,6 +1,5 @@
 '''
 TODO:
-Find coordinates of open reading frames
 parse general file instead of specific file types?
 
 DONE:
@@ -9,7 +8,8 @@ parse gb
 File into fasta
 find CDS list
 Finds exons
-A function that translates DNA to Amino Acidse
+A function that translates DNA to Amino Acids
+Find coordinates of open reading frames
 '''
 import re
 
@@ -55,7 +55,7 @@ def new_fasta(newFileName, body, heading):
 	newfile.write(body)
 	newfile.close()
 
-def convert_CDS(FileName):
+def get_CDS(FileName):
 	#open file
 	f = open(FileName, 'r')
 	File = f.read()
@@ -79,27 +79,31 @@ def convert_CDS(FileName):
 
 	return CDS_list
 
-def find_exons(FileName, list = True):
-	CDS_list = convert_CDS(FileName)
+def find_exons(FileName, return_list = True):
+	#gets the CDS list and DNA sequence from the file specified
+	CDS_list = get_CDS(FileName)
+	DNA_seq = parse_gb(FileName)
 
+	#variable delaration
 	exon_sequence = ""
 	exon_sequence_list = []
-	DNA_seq = parse_gb(FileName)
-	# now pull it out
+	
+	# populates the sequence list and the exon string
 	for index in range(0,len(CDS_list),2):
 	    begin = int(CDS_list[index]) - 1
 	    end = int(CDS_list[index+1])
 	    exon_sequence += DNA_seq[begin:end]
 	    exon_sequence_list.append(DNA_seq[begin:end])
-	if(list):
+
+	if(return_list):
 		return exon_sequence_list
 	else:
 		return exon_sequence
 
-def find_introns(FileName, list = True):
+def find_introns(FileName, return_list = True):
 
 	#Gets the CDS list and the DNA sequence
-	CDS_list = convert_CDS(FileName)
+	CDS_list = get_CDS(FileName)
 	DNA_seq = parse_gb(FileName)
 
 	#variable declaration
@@ -107,22 +111,25 @@ def find_introns(FileName, list = True):
 	intron_seq = ""
 	intron_list = []
 
-	#
+	#adds the beginning and ending coordinates to intron_coor in the form of (begin1, end1, begin2, end2, beginn, endn)
 	for i in range(0,len(CDS_list)-1, 2):
 		intron_coor.append(int(CDS_list[i+1]))
-		intron_coor.append(int(CDS_list[i+1])-1)
+		intron_coor.append(int(CDS_list[i+1]-1))
 
-	for index in range(0,len(intron_coor),2):
-	    begin = int(intron_coor[index]) - 1
-	    end = int(intron_coor[index+1])
+	#populates the intron sequence and the list of introns
+	for i in range(0,len(intron_coor),2):
+	    begin = intron_coor[i][0]
+	    end = intron_coor[i][1]
 	    intron_seq += DNA_seq[begin:end]
 	    intron_list.append(DNA_seq[begin:end])
-	if(list):
+
+	if(return_list):
 		return intron_list
 	else:
 		return intron_seq
 
 def translate(DNA):
+	#genecode dictionary
 	genecode = {
 	    'ATA':'I', 'ATC':'I', 'ATT':'I', 'ATG':'M',
 	    'ACA':'T', 'ACC':'T', 'ACG':'T', 'ACT':'T',
@@ -141,15 +148,16 @@ def translate(DNA):
 	    'TAC':'Y', 'TAT':'Y', 'TAA':'*', 'TAG':'*',
 	    'TGC':'C', 'TGT':'C', 'TGA':'*', 'TGG':'W'}
 
+	#translates the DNA into a protein sequence
 	prot_seq = ''
 	for i in range(0,len(DNA), 3):
 		codon = DNA[i:i+3]
-		AA = genecode[codon]
-		prot_seq += AA
+		prot_seq += genecode[codon]
 
 	return prot_seq
 
-def find_orf(fileName, return_coor = False):
+def orf(fileName, return_Type = 'coor', min_bases = 75):
+	#detects the file type and gets the DNA sequence from that file type
 	gb_ext = re.compile('\.gb')
 	fasta_ext = re.compile('\.fasta')
 	DNA = ''
@@ -158,27 +166,39 @@ def find_orf(fileName, return_coor = False):
 	elif(fasta_ext.search(fileName)):
 		DNA = parse_fasta(fileName)
 	else:
-		print('Error: Wrong file type sent to find_orf')
+		return 'Error: Wrong file type sent to find_orf'
 
-	pattern = re.compile(r'ATG((?!TAA|TAG|TGA)...){75,}(TAA|TAG|TGA)')
+	#the pattern for an orf
+	pattern = re.compile(r'ATG((?!TAA|TAG|TGA)...){'+str(min_bases)+',}(TAA|TAG|TGA)')
 	orfs = re.finditer(pattern, DNA)
 	
-
+	#populates orf_list with the coordinates of the start and end of each reading frame in the format (begin1, end1, begin2, end2, beginn, endn)
 	orf_list = []
 	for orf in orfs:
 	    begin = orf.start()
 	    end = orf.end()
 	    orf_list.append(begin)
 	    orf_list.append(end)
-	    
+	if(return_Type == 'coor'):
+		return orf_list
 	
+	#populates orf_seq with the DNA from each reading frame
 	orf_seqs = []
 	for i in range(0, len(orf_list), 2):
 	    begin = int(orf_list[i])
 	    end = int(orf_list[i+1])
 	    orf_seqs.append(DNA[begin:end])
 	
-	if(return_coor):
-		return orf_list
-	return orf_seqs
+	if(return_Type =='DNA')
+		return orf_seqs
+
+	#if the user wants the Amino Acids from each open reading frame returned, populates and returns AA with the Amino Acids in each orf
+	if(return_Type == 'AA'):
+		AA = []
+		for orf in orf_seqs
+			AA.append(translate(orf))
+		return AA
+	
+
+	return 'Error: invalid return type passed to orf'
 
