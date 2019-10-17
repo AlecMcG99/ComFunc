@@ -150,7 +150,7 @@ def translate(DNA):
 
 	return prot_seq
 
-def orf(fileName, return_Type = 'coor', min_bases = 75):
+def orf(fileName, return_Type = 'i', min_bases = 75):
 	#detects the file type and gets the DNA sequence from that file type
 	gb_ext = re.compile('\.gb')
 	fasta_ext = re.compile('\.fasta')
@@ -166,14 +166,14 @@ def orf(fileName, return_Type = 'coor', min_bases = 75):
 	pattern = re.compile(r'ATG((?!TAA|TAG|TGA)...){'+str(min_bases)+',}(TAA|TAG|TGA)')
 	orfs = re.finditer(pattern, DNA)
 	
-	#populates orf_list with the coordinates of the start and end of each reading frame in the format (begin1, end1, begin2, end2, beginn, endn)
+	#populates orf_list with the python indices of the start and end of each reading frame in the format (begin1, end1, begin2, end2, beginn, endn)
 	orf_list = []
 	for orf in orfs:
 	    begin = orf.start()
 	    end = orf.end()
 	    orf_list.append(begin)
 	    orf_list.append(end)
-	if(return_Type == 'coor'):
+	if(return_Type == 'i'):
 		return orf_list
 	
 	#populates orf_seq with the DNA from each reading frame
@@ -182,10 +182,13 @@ def orf(fileName, return_Type = 'coor', min_bases = 75):
 	    begin = int(orf_list[i])
 	    end = int(orf_list[i+1])
 	    orf_seqs.append(DNA[begin:end])
-	
 	if(return_Type =='DNA'):
 		return orf_seqs
-
+	
+	if(return_Type == 'coor'):
+		for i in range(0,len(orf_list),2):
+			orf_list[i] += 1 
+		return orf_list
 	#if the user wants the Amino Acids from each open reading frame returned, populates and returns AA with the Amino Acids in each orf
 	if(return_Type == 'AA'):
 		AA = []
