@@ -1,16 +1,10 @@
 '''
-TODO:
-parse general file instead of specific file types?
-
-DONE:
-parse fasta
-parse gb
-File into fasta
-find CDS list
-Finds exons
-A function that translates DNA to Amino Acids
-Find coordinates of open reading frames
+A module with common functions that we use in BioInformatics
+Author: Alec McGlasson
+Version: 1.0
+Date last Modified: 10/17/2019
 '''
+
 import re
 
 def parse_fasta(FileName):
