@@ -3,8 +3,8 @@ A module with the common functions that we use in CS 116: BIOINFORMATICS
 Current Version = 1.0 
 
 # Installation
-1. Download Comfunc.py and put it in the same directory as your Jupyter Notebook files for BioInformatics
-2. import Comfunc at the top of your program 
+1. Download the lastest release, unzip it, and put it in the same directory as your Jupyter Notebook files for BioInformatics
+2. type 'from ComFunc-1.0 import ComFunc' at the top of your program
 
 # Usage
 ## parse_fasta(FileName)
