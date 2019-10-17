@@ -113,15 +113,15 @@ def find_introns(FileName, return_list = True):
 
 	#adds the beginning and ending coordinates to intron_coor in the form of (begin1, end1, begin2, end2, beginn, endn)
 	for i in range(0,len(CDS_list)-1, 2):
-		intron_coor.append(int(CDS_list[i+1]))
-		intron_coor.append(int(CDS_list[i+1]-1))
-
+		intron_coor.append(int(CDS_list[i])+1)
+		intron_coor.append(int(CDS_list[i+1])-1)
 	#populates the intron sequence and the list of introns
+	print(intron_coor)
 	for i in range(0,len(intron_coor),2):
-	    begin = intron_coor[i][0]
-	    end = intron_coor[i][1]
-	    intron_seq += DNA_seq[begin:end]
-	    intron_list.append(DNA_seq[begin:end])
+		begin = int(intron_coor[i]) - 1
+		end = int(intron_coor[i+1])
+		intron_seq += DNA_seq[begin:end]
+		intron_list.append(DNA_seq[begin:end])
 
 	if(return_list):
 		return intron_list
@@ -189,13 +189,13 @@ def orf(fileName, return_Type = 'coor', min_bases = 75):
 	    end = int(orf_list[i+1])
 	    orf_seqs.append(DNA[begin:end])
 	
-	if(return_Type =='DNA')
+	if(return_Type =='DNA'):
 		return orf_seqs
 
 	#if the user wants the Amino Acids from each open reading frame returned, populates and returns AA with the Amino Acids in each orf
 	if(return_Type == 'AA'):
 		AA = []
-		for orf in orf_seqs
+		for orf in orf_seqs:
 			AA.append(translate(orf))
 		return AA
 	
