@@ -10,7 +10,7 @@ import re
 def parse_fasta(FileName):
 	#open the file
     file = open(FileName, 'r')
-    file.close()
+    
     #Split the content of the file into a list based newline characters and remove the descriptor line
     DNA_sequence = file.readlines()
     DNA_sequence = DNA_sequence[1:]
@@ -20,7 +20,7 @@ def parse_fasta(FileName):
     DNA_String = DNA_String.replace("\n", "")
     #Makes it uppercase
     DNA_String = DNA_String.upper()
-    
+    file.close()
     return DNA_String
 
 def parse_gb(FileName):
