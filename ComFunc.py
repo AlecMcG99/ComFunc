@@ -1,7 +1,7 @@
 '''
 A module with common functions that we use in BioInformatics
 Author: Alec McGlasson
-Version: 1.0
+Version: 1.1
 Date last Modified: 10/17/2019
 '''
 
