@@ -27,3 +27,13 @@ Takes the name of the file you want to create, the body of the file(the DNA sequ
 	DNA_String = 'CCACCCCGAGCCTAGAGAAGGCTCCTAGCTTGGCTGGGCCTCATGGGGCCCTTGTCTGCTT...'
 	new_fasta('CFTR.fasta', DNA_String, '>CFTR coding')
 	
+## get_CDS(FileName)
+Takes the name of a GenBank file and returns the CDS list from the file in a python-formatted list
+	import ComFunc
+	CDS = ComFunc.getCDS('hras.gb')
+	print(CDS)
+	output = (begin1, end1, begin2, end2,...,beginN, endN)
+
+## find_exons(FileName, return_list = True)
+FileName: str, name of file the user wants to parse
+return_list: optional, bool, causes the function to return a list of the 
