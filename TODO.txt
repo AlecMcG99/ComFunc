@@ -1,0 +1,11 @@
+TODO:
+parse general file instead of specific file types?
+Switch list types to tuples
+DONE:
+parse fasta
+parse gb
+File into fasta
+find CDS list
+Finds exons
+A function that translates DNA to Amino Acids
+Find coordinates of open reading frames
